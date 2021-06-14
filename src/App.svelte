@@ -1,30 +1,47 @@
 <script>
-	export let name;
+	let username, password
+	// will be set by userbase
+	let userObj = null
+	const userbase = window.userbase
+
+	// Userbase initializer
+	let authProm = userbase.init({appId: 'a4be3741-e947-4d50-a6fc-f64551c5ef2e'})
+		.then(({user}) => userObj = user)
+	
+	// Very simple authentication functions
+	const signIn = () => authProm = userbase.signIn({username, password}).then(user => userObj = user)
+	const signOut = () => authProm = userbase.signOut().then(() => userObj = null)
+	const signUp = () => authProm = userbase.signUp({username, password}).then(user => userObj = user )
 </script>
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
 
+<!---Control flow in Svelte is very oranized and easy to read-->
+{#await authProm}
+	Waiting...
+{:then}
+	<!--Code blocks in Svelte are easier to read than functions conditionally returning JSX in my opinion-->
+	{#if !userObj}
+		<!--bind value will automatically set value of variables username and password to the input values -- beautiful-->
+		<input placeholder="username" type="text" bind:value={username}><br>
+		<input placeholder="password" type="password" bind:value={password}><br>
+		<button on:click={signIn}>Sign In</button>
+		<button on:click={signUp}>Sign Up</button>	
+	{:else}
+		<h3>Hello, {userObj.username}!</h3>
+		<button on:click={signOut}>Sign Out</button>
+	{/if}
+
+{:catch error}
+	<h3 class="error">{error.message}</h3>
+{/await}
+
+<!--Style tags in each 'component' significantly reduce css headaches-->
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+	.error {
+		color: red;
 	}
 
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	h3 {
+		color: blue;
 	}
 </style>
