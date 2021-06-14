@@ -5,7 +5,7 @@
 	const userbase = window.userbase
 
 	// Userbase initializer
-	let authProm = userbase.init({appId: 'a4be3741-e947-4d50-a6fc-f64551c5ef2e'})
+	let authProm = userbase.init({appId: 'your app id'})
 		.then(({user}) => userObj = user)
 	
 	// Very simple authentication functions
